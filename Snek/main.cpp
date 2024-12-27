@@ -24,22 +24,31 @@ bool isCollision(std::pair<int,int> head) {
 	}
 	return false;
 }
-void handleEvent(Snek& snek) {
+void handleEvent(Snek& snek,bool& isPaused) {
 	if (_kbhit()) {
 		char n = _getch();
-		switch (n) {
-		case 'd':
-			snek.event(1);
-			break;
-		case 'a':
-			snek.event(2);
-			break;
-		case 'w':
-			snek.event(3);
-			break;
-		case 's':
-			snek.event(4);
-			break;
+		if (!isPaused) {
+			switch (n) {
+			case 'd':
+				snek.event(1);
+				break;
+			case 'a':
+				snek.event(2);
+				break;
+			case 'w':
+				snek.event(3);
+				break;
+			case 's':
+				snek.event(4);
+				break;
+			case ' ':
+				if (isPaused)isPaused = false;
+				else isPaused = true;
+				break;
+			}
+		}
+		else {
+			if(n==' ')isPaused = false;
 		}
 	}
 }
@@ -56,7 +65,25 @@ void initArea(std::vector<std::string>& area) {
 		}
 	}
 }
+void eat(Snek& snek, Food& food, int& score) {
+	if (snek.getHead() == food.getFood()) {
+		snek.grow();
+		food.generateNewFood();
+		score+=10;
+	}
+}
+void ShowConsoleCursor(bool showFlag)
+{
+	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_CURSOR_INFO     cursorInfo;
+
+	GetConsoleCursorInfo(out, &cursorInfo);
+	cursorInfo.bVisible = showFlag; // set the cursor visibility
+	SetConsoleCursorInfo(out, &cursorInfo);
+}
 int main(int argc, char* argv[]) {
+	ShowConsoleCursor(false);
 	std::vector<std::string> area;
 	initArea(area);
 	bool isRunning = true;
@@ -68,19 +95,26 @@ int main(int argc, char* argv[]) {
 	Food food;
 	food.init(width, height);
 	snek.init(width / 2, height / 2, 1);
+	int score = 0;
+	int length = 2;
+	bool isPaused = false;
 	while (isRunning) {
 		a = GetTickCount();
 		printf("%d\n", frameNum++);
-		if (isCollision(snek.getHead())) {
+		if (isCollision(snek.getHead()) || snek.isSelfCollision()) {
 			isRunning = false;
 			break;
 		}
 		system("cls");
-		handleEvent(snek);
+		handleEvent(snek,isPaused);
 		showGame(area);
+		eat(snek, food,score);
 		snek.showSnek(area);
 		food.showFood(area);
-		if (frameNum % 10 == 0) {
+		snek.setLength(length);
+		printf("Score: %d\n", score);
+		printf("Length: %d\n", length);
+		if (frameNum % 10 == 0 && !isPaused) {
 			snek.update();
 		}
 		b = GetTickCount();
@@ -88,4 +122,7 @@ int main(int argc, char* argv[]) {
 			Sleep(frameRate - (b - a));
 		}
 	}
+	printf("Game Over\nPress any button to exit\n");
+	_getch();
+	return 0;
 }
