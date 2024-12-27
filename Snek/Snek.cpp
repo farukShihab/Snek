@@ -34,15 +34,14 @@ void Snek::update() {
 			break;
 		}
 	}
-	int temp1,temp2;
+	std::vector<int> temp = directions;
 	for (int i = 1;i < directions.size();i++) {
-		temp1 = directions[i];
-		temp2 = directions[i - 1];
+		directions[i] = temp[i - 1];
 	}
 }
 void Snek::showSnek(std::vector<std::string>& str) {
 	for (int i = 0;i < body.size();i++) {
-		str[body[i].first][body[i].second] = 'a';
+		str[body[i].first][body[i].second] = 'O';
 	}
 }
 std::pair<int, int> Snek::getHead() {
