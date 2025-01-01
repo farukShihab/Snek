@@ -31,3 +31,6 @@ void Food::randomize() {
 		y--;
 	}
 }
+std::pair<int, int> Food::getFood() {
+	return std::make_pair(x, y);
+}

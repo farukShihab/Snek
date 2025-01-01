@@ -81,3 +81,11 @@ bool Snek::isSelfCollision() {
 void Snek::setLength(int& length) {
 	length = body.size();
 }
+bool Snek::isFoodOverlap(std::pair<int, int> food) {
+	for (int i = 0;i < body.size();i++) {
+		if (body[i] == food) {
+			return true;
+		}
+	}
+	return false;
+}

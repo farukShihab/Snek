@@ -12,6 +12,7 @@ public:
 	void grow();
 	bool isSelfCollision();
 	void setLength(int& length);
+	bool isFoodOverlap(std::pair<int, int> food);
 private:
 	std::vector<std::pair<int,int>> body;
 	std::vector<int> directions;

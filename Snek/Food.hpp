@@ -7,9 +7,7 @@ public:
 	void update();
 	void showFood(std::vector<std::string>& str);
 	void generateNewFood();
-	std::pair<int, int> getFood() {
-		return std::make_pair(x, y);
-	}
+	std::pair<int, int> getFood();
 private:
 	int width;
 	int height;

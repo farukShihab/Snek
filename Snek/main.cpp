@@ -3,12 +3,12 @@
 #include<conio.h>
 #include "Snek.hpp"
 #include "Food.hpp"
-int width = 30;
-int height = 20;
+constexpr int width = 20;
+constexpr int height = 20;
 char border = '#';
 void showGame(std::vector<std::string>& area) {
-	for (int i = 0;i < area.size();i++) {
-		for (int j = 0;j < area[i].size();j++) {
+	for (int i = 0;i < height;i++) {
+		for (int j = 0;j < width;j++) {
 			printf("%c", area[i][j]);
 			if (area[i][j] != ' ' && area[i][j] != border) {
 				area[i][j] = ' ';
@@ -19,7 +19,7 @@ void showGame(std::vector<std::string>& area) {
 	printf("\n");
 }
 bool isCollision(std::pair<int,int> head) {
-	if (head.first >= height || head.second >= width || head.first<=0 || head.second<=0) {
+	if (head.first >= height-1 || head.second >= width-1 || head.first<=0 || head.second<=0) {
 		return true;
 	}
 	return false;
@@ -69,15 +69,14 @@ void eat(Snek& snek, Food& food, int& score) {
 	if (snek.getHead() == food.getFood()) {
 		snek.grow();
 		food.generateNewFood();
+		while(snek.isFoodOverlap(food.getFood()))food.generateNewFood();
 		score+=10;
 	}
 }
 void ShowConsoleCursor(bool showFlag)
 {
 	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	CONSOLE_CURSOR_INFO     cursorInfo;
-
+	CONSOLE_CURSOR_INFO cursorInfo;
 	GetConsoleCursorInfo(out, &cursorInfo);
 	cursorInfo.bVisible = showFlag; // set the cursor visibility
 	SetConsoleCursorInfo(out, &cursorInfo);
@@ -94,22 +93,23 @@ int main(int argc, char* argv[]) {
 	Snek snek;
 	Food food;
 	food.init(width, height);
-	snek.init(width / 2, height / 2, 1);
+	snek.init(height / 2, width / 2, 1);
 	int score = 0;
 	int length = 2;
 	bool isPaused = false;
 	while (isRunning) {
-		a = GetTickCount();
-		printf("%d\n", frameNum++);
+		a = GetTickCount64();
+		//printf("%d\n", frameNum);
+		frameNum++;
 		if (isCollision(snek.getHead()) || snek.isSelfCollision()) {
 			isRunning = false;
 			break;
 		}
 		system("cls");
-		handleEvent(snek,isPaused);
 		showGame(area);
 		eat(snek, food,score);
 		snek.showSnek(area);
+		handleEvent(snek,isPaused);
 		food.showFood(area);
 		snek.setLength(length);
 		printf("Score: %d\n", score);
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
 		if (frameNum % 10 == 0 && !isPaused) {
 			snek.update();
 		}
-		b = GetTickCount();
+		b = GetTickCount64();
 		if (b - a < frameRate) {
 			Sleep(frameRate - (b - a));
 		}
