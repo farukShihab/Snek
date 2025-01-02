@@ -1,10 +1,6 @@
 #include "Snek.hpp"
-Snek::Snek() {
-
-}
-Snek::~Snek() {
-
-}
+Snek::Snek() {}
+Snek::~Snek() {}
 void Snek::init(int x, int y, int dir) {
 	body.push_back(std::make_pair(x, y));
 	body.push_back(std::make_pair(x, y - 1));

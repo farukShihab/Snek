@@ -1,6 +1,6 @@
 #include "Food.hpp"
-Food::Food() {
-}
+Food::Food() {}
+Food::~Food() {}
 void Food::init(int width, int height) {
 	this->width = width;
 	this->height = height;

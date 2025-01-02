@@ -1,15 +1,17 @@
 #include<windows.h>
 #include<iostream>
 #include<conio.h>
+#include<queue>
 #include "Snek.hpp"
 #include "Food.hpp"
 constexpr int width = 20;
 constexpr int height = 20;
 char border = '#';
+std::queue<int> inputBuffer;
 void showGame(std::vector<std::string>& area) {
 	for (int i = 0;i < height;i++) {
+		std::cout << area[i];
 		for (int j = 0;j < width;j++) {
-			printf("%c", area[i][j]);
 			if (area[i][j] != ' ' && area[i][j] != border) {
 				area[i][j] = ' ';
 			}
@@ -30,16 +32,16 @@ void handleEvent(Snek& snek,bool& isPaused) {
 		if (!isPaused) {
 			switch (n) {
 			case 'd':
-				snek.event(1);
+				inputBuffer.push(1);
 				break;
 			case 'a':
-				snek.event(2);
+				inputBuffer.push(2);
 				break;
 			case 'w':
-				snek.event(3);
+				inputBuffer.push(3);
 				break;
 			case 's':
-				snek.event(4);
+				inputBuffer.push(4);
 				break;
 			case ' ':
 				if (isPaused)isPaused = false;
@@ -115,6 +117,10 @@ int main(int argc, char* argv[]) {
 		printf("Score: %d\n", score);
 		printf("Length: %d\n", length);
 		if (frameNum % 10 == 0 && !isPaused) {
+			if (!inputBuffer.empty()) {
+				snek.event(inputBuffer.front());
+				inputBuffer.pop();
+			}
 			snek.update();
 		}
 		b = GetTickCount64();

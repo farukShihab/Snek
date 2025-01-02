@@ -3,6 +3,7 @@
 class Food {
 public:
 	Food();
+	~Food();
 	void init(int width, int height);
 	void update();
 	void showFood(std::vector<std::string>& str);
